@@ -147,7 +147,7 @@ def main():
     mousex = 0
     mousey = 0
     
-    pygame.display.set_caption('Sudoku vERIFICATION')
+    pygame.display.set_caption('Sudoku Verification')
 
     global BASICFONT, BASICFONTSIZE, LARGEFONT, LARGEFONTSIZE
     BASICFONTSIZE = 15
@@ -181,7 +181,6 @@ def main():
         if mouseClicked == True:
             # allow number to be selected
             currentGrid = displaySelectedNumber(mousex, mousey, currentGrid)
-            print(currentGrid)
 
         # repaints screen
         DISPLAYSURF.fill(WHITE)
