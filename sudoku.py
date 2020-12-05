@@ -235,9 +235,9 @@ def main():
     DISPLAYSURF.fill(WHITE)                             # Paint board
     drawGrid()                                          # Draw grid lines
 
-    # Initialize currentGrid dictionary for each 9x9 cells
+    # Initialize currentGrid dictionary for each 9x9 cells & display values
     currentGrid = initiateCells()
-    displayCells(currentGrid)                           # Display values
+    displayCells(currentGrid)                           
 
     # Main game loop
     while True: 
@@ -261,9 +261,8 @@ def main():
         displayCells(currentGrid)
         drawGrid()
 
-        # Draw box
-        drawBox(mousex,mousey)
-        
+        # Draw box & update display based on clock tick
+        drawBox(mousex,mousey)        
         pygame.display.update()    
         FPSCLOCK.tick(FPS)
 #------------------------------------------------------------------------------
