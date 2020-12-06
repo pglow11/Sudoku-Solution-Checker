@@ -34,6 +34,7 @@ WHITE     = (255,255,255)
 LIGHTGRAY = (200,200,200)
 BLUE      = (0  ,0  ,255)
 GREEN     = (0  ,255,0  )
+DARKGRAY  = (127,127,127)
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
@@ -53,25 +54,66 @@ def drawGrid():
     
     # Draw Major Lines
     for x in range(0, WINDOWWIDTH, SQUARESIZE): # draw vertical lines
-        pygame.draw.line(DISPLAYSURF, BLACK, (x,0),(x,WINDOWHEIGHT),2)
+        pygame.draw.line(DISPLAYSURF, BLACK, (x,0),(x,WINDOWHEIGHT),3)
     for y in range (0, WINDOWHEIGHT, SQUARESIZE): # draw horizontal lines
-        pygame.draw.line(DISPLAYSURF, BLACK, (0,y), (WINDOWWIDTH, y),2)
+        pygame.draw.line(DISPLAYSURF, BLACK, (0,y), (WINDOWWIDTH, y),3)
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
 def initiateCells():
-# This function creates a dictionary to store a list(0..8) at each
+# This function creates a dictionary to store a list(1..9) at each
 # each of the 9x9 cell locations ([xCoord, yCoord]).
 #  Args: 
 #       None
 #  Returns: 
-#       initialGrid = {(xCoord, yCoord): [0,1,...8]}
+#       initialGrid = {(xCoord, yCoord): [1,2,...9]}
 
     initialGrid = {}
     fullCell = [1,2,3,4,5,6,7,8,9]
     for xCoord in range(0,9):
         for yCoord in range(0,9):
             initialGrid[xCoord,yCoord] = list(fullCell) # Copies List
+    
+    # Hard-code in initial cells [x,y]
+    # y = 0
+    initialGrid[0,0] = [8]
+    initialGrid[3,0] = [9]
+    initialGrid[4,0] = [3]
+    initialGrid[8,0] = [2]
+    # y = 1
+    initialGrid[2,1] = [9]
+    initialGrid[7,1] = [4]
+    # y = 2
+    initialGrid[0,2] = [7]
+    initialGrid[2,2] = [2]
+    initialGrid[3,2] = [1]
+    initialGrid[6,2] = [9]
+    initialGrid[7,2] = [6]
+    # y = 3
+    initialGrid[0,3] = [2]
+    initialGrid[7,3] = [9]
+    # y = 4
+    initialGrid[1,4] = [6]
+    initialGrid[7,4] = [7]     
+    # y = 5
+    initialGrid[1,5] = [7]
+    initialGrid[5,5] = [6]
+    initialGrid[8,5] = [5]
+    # y = 6
+    initialGrid[1,6] = [2]
+    initialGrid[2,6] = [7]
+    initialGrid[5,6] = [8]
+    initialGrid[6,6] = [4]
+    initialGrid[8,6] = [6]
+    # y = 7
+    initialGrid[1,7] = [3]
+    initialGrid[6,7] = [5]
+    # y = 8
+    initialGrid[0,8] = [5]
+    initialGrid[4,8] = [6]
+    initialGrid[5,8] = [2]
+    initialGrid[8,8] = [8]
+
     return initialGrid
 #------------------------------------------------------------------------------
 
@@ -100,11 +142,16 @@ def displayCells(currentGrid):
                     yFactor = 2
                 #(item[0] * CELLSIZE) Positions in the right Cell
                 #(xFactor*NUMBERSIZE) Offsets to position number
-                if cellData.count(' ') < 8:    
+                if len(cellData) == 1:
+                    populateCells(number,
+                                  (item[0]*CELLSIZE),
+                                  (item[1]*CELLSIZE),
+                                  'fixed')
+                elif cellData.count(' ') < 8:    
                     populateCells(number,
                                   (item[0]*CELLSIZE)+(xFactor*NUMBERSIZE),
                                   (item[1]*CELLSIZE)+(yFactor*NUMBERSIZE),
-                                  'small')
+                                  'small') 
                 else:
                     populateCells(number,
                                   (item[0]*CELLSIZE),
@@ -127,6 +174,8 @@ def populateCells(cellData, x, y,size):
 
     if size == 'small':
         cellSurf = BASICFONT.render('%s' %(cellData), True, LIGHTGRAY)
+    elif size == 'fixed':
+        cellSurf = LARGEFONT.render('%s' %(cellData), True, DARKGRAY)
     elif size == 'large':
         cellSurf = LARGEFONT.render('%s' %(cellData), True, GREEN)
         
@@ -191,16 +240,19 @@ def displaySelectedNumber(mousex, mousey, currentGrid):
     currentState = currentGrid[xCellNumber,yCellNumber]
     
     # Update cell's currentGrid dictionary based on user selection
-    incNum = 0    
-    while incNum < 9:
-        # if NOT number selected
-        if (incNum + 1) != number:
-            currentState[incNum] = ' ' # make ' '
-        else:
-            currentState[incNum] = number
-        # Update dictionary's list at cell's x,y location
-        currentGrid[xCellNumber,yCellNumber] = currentState
-        incNum += 1
+    if len(currentState) == 1:
+        pass
+    else:
+        incNum = 0    
+        while incNum < 9:
+            # if NOT number selected
+            if (incNum + 1) != number:
+                currentState[incNum] = ' ' # make ' '
+            else:
+                currentState[incNum] = number
+            # Update dictionary's list at cell's x,y location
+            currentGrid[xCellNumber,yCellNumber] = currentState
+            incNum += 1
     return currentGrid
 #------------------------------------------------------------------------------ 
 
