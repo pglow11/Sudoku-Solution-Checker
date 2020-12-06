@@ -142,7 +142,7 @@ def displayCells(currentGrid):
                     yFactor = 2
                 #(item[0] * CELLSIZE) Positions in the right Cell
                 #(xFactor*NUMBERSIZE) Offsets to position number
-                if len(cellData) == 1:
+                if len(cellData) == 1:      # For cells that are hard-coded
                     populateCells(number,
                                   (item[0]*CELLSIZE),
                                   (item[1]*CELLSIZE),
@@ -257,6 +257,81 @@ def displaySelectedNumber(mousex, mousey, currentGrid):
 #------------------------------------------------------------------------------ 
 
 #------------------------------------------------------------------------------
+def checkComplete(currentGrid):
+# This function runs after each mouse click within the main game loop to 
+# determine if the user has finished selecting a value for each of the open 9x9
+# cells.
+#  Args: 
+#       currentGrid = dictionary for each x,y location
+#  Returns: 
+#       bool (True if all cells have only one number at x,y location)
+
+    for item in currentGrid: # item is x,y co-ordinate from 0-8
+        cellData = currentGrid[item] # isolates the numbers still available
+        if cellData.count(' ') < 8:
+            if len(cellData) == 1:
+                pass
+            else:
+                return False        
+    return True
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+def checkX(currentGrid):
+# This function checks the user selections for each column, specifically by
+# verifying that each column only contains 1-9.
+#  Args: 
+#       currentGrid
+#  Returns: 
+#       bool (True = column contains numbers 1-9)
+
+    for xCoord in range(0,9):
+        tempX = []
+        for yCoord in range(0,9):
+            for number in currentGrid[xCoord, yCoord]:
+                if number != ' ':
+                    tempX.append(number)
+        tempX.sort()
+        for count in range(0,9):
+            if tempX[count] != (count + 1):
+                return False
+    return True
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+def checkY(currentGrid):
+# This function checks the user selections for each row, specifically by
+# verifying that each row only contains 1-9.
+#  Args: 
+#       currentGrid
+#  Returns: 
+#       bool (True = column contains numbers 1-9)
+
+    for yCoord in range(0,9):
+        tempY = []
+        for xCoord in range(0,9):
+            for number in currentGrid[xCoord, yCoord]:
+                if number != ' ':
+                    tempY.append(number)
+        tempY.sort()
+        for count in range(0,9):
+            if tempY[count] != (count + 1):
+                return False
+    return True
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+def checkSquare(currentGrid):
+# This function checks the user selections for each 3x3 square, specifically by
+# verifying that each square only contains 1-9.
+#  Args: 
+#       currentGrid
+#  Returns: 
+#       bool (True = column contains numbers 1-9)
+
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
 def main():
 # This function is the driver code to run the sudoku GUI and verification.
 #  Args: 
@@ -292,8 +367,10 @@ def main():
     displayCells(currentGrid)                           
 
     # Main game loop
-    while True: 
+    complete = False
+    while not complete: 
         mouseClicked = False
+
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -307,7 +384,8 @@ def main():
                 mouseClicked = True            
         if mouseClicked == True:
             currentGrid = displaySelectedNumber(mousex, mousey, currentGrid)
-
+            complete = checkComplete(currentGrid)
+            
         # Repaints screen
         DISPLAYSURF.fill(WHITE)
         displayCells(currentGrid)
@@ -317,6 +395,15 @@ def main():
         drawBox(mousex,mousey)        
         pygame.display.update()    
         FPSCLOCK.tick(FPS)
+
+    # Verification of solution 
+    print("\n")
+    print("You've entered all values. Verifying solution now...")
+    resultX = checkX(currentGrid)
+    resultY = checkY(currentGrid)
+    # resultSquare = checkSquare(currentGrid)
+    print(f"Each column (x-coordinates) is verified: {resultX}")
+    print(f"Each row (y-coordinates) is verified: {resultY}")
 #------------------------------------------------------------------------------
 
 if __name__=='__main__':
