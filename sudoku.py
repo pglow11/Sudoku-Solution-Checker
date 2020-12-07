@@ -329,6 +329,32 @@ def checkSquare(currentGrid):
 #  Returns: 
 #       bool (True = column contains numbers 1-9)
 
+    total = 0
+    squareX = 0
+    squareY = 0
+
+    while total < 9:    # Total counts number of cells completed 
+        tempX = []      # Reset temp list
+        total += 1
+        # Nested for loop to go through 3x3 square
+        for xCoord in range(0,3): 
+            for yCoord in range(0,3):
+                for number in currentGrid[xCoord + squareX, yCoord + squareY]:
+                    if number != ' ':
+                        tempX.append(number)
+        # Sort and check temp[] to ensure all numbers in tempX are listed (1-9) 
+        tempX.sort()
+        for count in range(0,9):
+            if tempX[count] != (count + 1):
+                return False
+        # Apply factors to use in nested for loop as it moves thru 9x9 grid
+        if (total % 3) == 0:    # Move squareY to next row of 3x3
+            squareX = 0 
+            squareY += 3
+        else:
+            squareX += 3        # Move squareX to next 3x3
+    
+    return True
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------
@@ -401,9 +427,10 @@ def main():
     print("You've entered all values. Verifying solution now...")
     resultX = checkX(currentGrid)
     resultY = checkY(currentGrid)
-    # resultSquare = checkSquare(currentGrid)
+    resultSquare = checkSquare(currentGrid)
     print(f"Each column (x-coordinates) is verified: {resultX}")
     print(f"Each row (y-coordinates) is verified: {resultY}")
+    print(f"Each 3x3 square (9 total) is verified: {resultSquare}")
 #------------------------------------------------------------------------------
 
 if __name__=='__main__':
